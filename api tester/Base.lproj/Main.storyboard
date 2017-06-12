@@ -36,6 +36,7 @@
                         <segue destination="MUE-qT-I6p" kind="show" identifier="showCustomCamera" id="yZo-2c-3Sa"/>
                         <segue destination="4DD-4i-ncf" kind="show" identifier="showVNRectangleDetection" id="uIa-rb-155"/>
                         <segue destination="cv4-dg-VgI" kind="show" identifier="showVNObjectClassification" id="5Xf-sU-vPw"/>
+                        <segue destination="UO9-6Y-gr2" kind="show" identifier="showVNObjectTracking" id="7tZ-Xh-KIc"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m4d-ng-wBa" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -225,6 +226,75 @@
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2190" y="212"/>
+        </scene>
+        <!--vision object tracking-->
+        <scene sceneID="piR-5x-Lyb">
+            <objects>
+                <viewController title="vision object tracking" id="UO9-6Y-gr2" customClass="VNObjectTrackingViewController" customModule="api_tester" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="D2c-uU-6iF"/>
+                        <viewControllerLayoutGuide type="bottom" id="kdp-xg-O1z"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="wz3-pw-Lps">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="i5C-dX-mxh">
+                                <rect key="frame" x="16" y="72" width="343" height="500"/>
+                                <color key="backgroundColor" red="0.95828610749999998" green="0.95828610749999998" blue="0.95828610749999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Gfo-jg-CHi" appends="YES" id="6Qc-0X-Qby"/>
+                                </connections>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wat" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hl7-AA-s2n">
+                                <rect key="frame" x="16" y="580" width="343" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nw1-kV-SrP">
+                                <rect key="frame" x="167" y="619" width="40" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="flip"/>
+                                <connections>
+                                    <action selector="swapCamera:" destination="UO9-6Y-gr2" eventType="touchUpInside" id="FdK-47-27I"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SHf-wO-aJb">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Nw1-kV-SrP" firstAttribute="leading" secondItem="wz3-pw-Lps" secondAttribute="leading" constant="167" id="8Cd-aM-4Sn"/>
+                            <constraint firstAttribute="trailing" secondItem="Nw1-kV-SrP" secondAttribute="trailing" constant="168" id="8nY-2b-Knd"/>
+                            <constraint firstAttribute="bottom" secondItem="i5C-dX-mxh" secondAttribute="bottom" constant="95" id="DlY-Qw-C5h"/>
+                            <constraint firstItem="i5C-dX-mxh" firstAttribute="top" secondItem="D2c-uU-6iF" secondAttribute="bottom" constant="8" id="JdX-wj-7Yg"/>
+                            <constraint firstItem="i5C-dX-mxh" firstAttribute="leading" secondItem="wz3-pw-Lps" secondAttribute="leading" constant="16" id="RMl-dI-Mwn"/>
+                            <constraint firstItem="Nw1-kV-SrP" firstAttribute="bottom" secondItem="kdp-xg-O1z" secondAttribute="top" id="Yc7-sB-K8O"/>
+                            <constraint firstItem="Hl7-AA-s2n" firstAttribute="leading" secondItem="i5C-dX-mxh" secondAttribute="leading" id="bMK-vK-k96"/>
+                            <constraint firstAttribute="trailing" secondItem="i5C-dX-mxh" secondAttribute="trailing" constant="16" id="kRc-CZ-IGc"/>
+                            <constraint firstItem="Hl7-AA-s2n" firstAttribute="top" secondItem="i5C-dX-mxh" secondAttribute="bottom" constant="8" symbolic="YES" id="kVf-ce-dhi"/>
+                            <constraint firstItem="Hl7-AA-s2n" firstAttribute="trailing" secondItem="i5C-dX-mxh" secondAttribute="trailing" id="qxR-zf-5ud"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="trackingView" destination="SHf-wO-aJb" id="vIz-cY-ylt"/>
+                        <outlet property="uiIdentificationLabel" destination="Hl7-AA-s2n" id="FLl-ld-ifQ"/>
+                        <outlet property="uiPreviewView" destination="i5C-dX-mxh" id="kdA-IB-xpS"/>
+                        <outlet property="uiSwapCameraButton" destination="Nw1-kV-SrP" id="nca-G6-6Nd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7uh-Ac-HwN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="Gfo-jg-CHi">
+                    <connections>
+                        <action selector="userTapped:" destination="UO9-6Y-gr2" id="XhV-DG-E0h"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="2842" y="212"/>
         </scene>
     </scenes>
 </document>

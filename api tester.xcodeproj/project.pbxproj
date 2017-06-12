@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CA175AB21EECD75F00483A94 /* VNObjectClassificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA175AB11EECD75F00483A94 /* VNObjectClassificationViewController.swift */; };
 		CA30E4D31EEF5806007F0CBC /* VNRectangleDetectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA30E4D21EEF5806007F0CBC /* VNRectangleDetectionViewController.swift */; };
+		CA30E4D51EEF5C37007F0CBC /* VNObjectTrackingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA30E4D41EEF5C37007F0CBC /* VNObjectTrackingViewController.swift */; };
 		CA7376BA1EEC7A0000194025 /* MainTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7376B81EEC7A0000194025 /* MainTableViewController.swift */; };
 		CA73E3C61EEC6F49009C65EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA73E3C51EEC6F49009C65EA /* AppDelegate.swift */; };
 		CA73E3CB1EEC6F49009C65EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA73E3C91EEC6F49009C65EA /* Main.storyboard */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		CA175AB11EECD75F00483A94 /* VNObjectClassificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VNObjectClassificationViewController.swift; sourceTree = "<group>"; };
 		CA30E4D21EEF5806007F0CBC /* VNRectangleDetectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VNRectangleDetectionViewController.swift; sourceTree = "<group>"; };
+		CA30E4D41EEF5C37007F0CBC /* VNObjectTrackingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VNObjectTrackingViewController.swift; sourceTree = "<group>"; };
 		CA7376B81EEC7A0000194025 /* MainTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTableViewController.swift; sourceTree = "<group>"; };
 		CA73E3C21EEC6F49009C65EA /* api tester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "api tester.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA73E3C51EEC6F49009C65EA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 				CA73E3CE1EEC6F49009C65EA /* LaunchScreen.storyboard */,
 				CA73E3D11EEC6F49009C65EA /* Info.plist */,
 				CA175AB11EECD75F00483A94 /* VNObjectClassificationViewController.swift */,
+				CA30E4D41EEF5C37007F0CBC /* VNObjectTrackingViewController.swift */,
 				CA30E4D21EEF5806007F0CBC /* VNRectangleDetectionViewController.swift */,
 			);
 			path = "api tester";
@@ -162,6 +165,7 @@
 				CA73E3C61EEC6F49009C65EA /* AppDelegate.swift in Sources */,
 				CA30E4D31EEF5806007F0CBC /* VNRectangleDetectionViewController.swift in Sources */,
 				CA7376BA1EEC7A0000194025 /* MainTableViewController.swift in Sources */,
+				CA30E4D51EEF5C37007F0CBC /* VNObjectTrackingViewController.swift in Sources */,
 				CA175AB21EECD75F00483A94 /* VNObjectClassificationViewController.swift in Sources */,
 				CAAC27441EEC8FCB00A0C6CA /* CameraTestViewController.swift in Sources */,
 			);
