@@ -239,12 +239,6 @@
                                     <outletCollection property="gestureRecognizers" destination="Gfo-jg-CHi" appends="YES" id="6Qc-0X-Qby"/>
                                 </connections>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wat" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hl7-AA-s2n">
-                                <rect key="frame" x="16" y="580" width="343" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nw1-kV-SrP">
                                 <rect key="frame" x="167" y="619" width="40" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
@@ -266,15 +260,11 @@
                             <constraint firstItem="i5C-dX-mxh" firstAttribute="top" secondItem="D2c-uU-6iF" secondAttribute="bottom" constant="8" id="JdX-wj-7Yg"/>
                             <constraint firstItem="i5C-dX-mxh" firstAttribute="leading" secondItem="wz3-pw-Lps" secondAttribute="leading" constant="16" id="RMl-dI-Mwn"/>
                             <constraint firstItem="Nw1-kV-SrP" firstAttribute="bottom" secondItem="kdp-xg-O1z" secondAttribute="top" id="Yc7-sB-K8O"/>
-                            <constraint firstItem="Hl7-AA-s2n" firstAttribute="leading" secondItem="i5C-dX-mxh" secondAttribute="leading" id="bMK-vK-k96"/>
                             <constraint firstAttribute="trailing" secondItem="i5C-dX-mxh" secondAttribute="trailing" constant="16" id="kRc-CZ-IGc"/>
-                            <constraint firstItem="Hl7-AA-s2n" firstAttribute="top" secondItem="i5C-dX-mxh" secondAttribute="bottom" constant="8" symbolic="YES" id="kVf-ce-dhi"/>
-                            <constraint firstItem="Hl7-AA-s2n" firstAttribute="trailing" secondItem="i5C-dX-mxh" secondAttribute="trailing" id="qxR-zf-5ud"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="trackingView" destination="SHf-wO-aJb" id="vIz-cY-ylt"/>
-                        <outlet property="uiIdentificationLabel" destination="Hl7-AA-s2n" id="FLl-ld-ifQ"/>
                         <outlet property="uiPreviewView" destination="i5C-dX-mxh" id="kdA-IB-xpS"/>
                         <outlet property="uiSwapCameraButton" destination="Nw1-kV-SrP" id="nca-G6-6Nd"/>
                     </connections>

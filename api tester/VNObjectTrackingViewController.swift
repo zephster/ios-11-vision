@@ -14,7 +14,6 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
 {
     // MARK: interface
     @IBOutlet weak var uiPreviewView: UIView!
-    @IBOutlet weak var uiIdentificationLabel: UILabel!
     @IBOutlet weak var uiSwapCameraButton: UIButton!
 
     @IBOutlet weak var trackingView: UIView? {
@@ -53,7 +52,6 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
     var captureSession     : AVCaptureSession?
     var videoPreviewLayer  : AVCaptureVideoPreviewLayer?
     var videoConnection    : AVCaptureConnection?
-    var requests           = [VNRequest]()
     var isUsingFrontCamera = false
     let sequenceHandler    = VNSequenceRequestHandler()
     var lastObservation    : VNDetectedObjectObservation?
@@ -69,8 +67,6 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
         if AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
         {
             self.initCamera()
-            self.setupClassification()
-            self.setupRectangleVision()
         }
         else
         {
@@ -83,8 +79,6 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
                     self.backToTestList(title: "no access", message: "need camera access")
                 } else {
                     self.initCamera()
-                    self.setupClassification()
-                    self.setupRectangleVision()
                 }
             }
         }
@@ -187,9 +181,11 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
         }
         else
         {
-            captureDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInWideAngleCamera,
-                                                    for: AVMediaType.video,
-                                                    position: AVCaptureDevice.Position.front)
+            captureDevice = AVCaptureDevice.default(
+                AVCaptureDevice.DeviceType.builtInWideAngleCamera,
+                for: AVMediaType.video,
+                position: AVCaptureDevice.Position.front
+            )
         }
 
         guard let camera = captureDevice else {
@@ -276,69 +272,12 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
                 print("tracking error \(error)")
             }
         }
-
-
-        // todo: eventually phase imageRequestHandler out
-
-        var requestOptions:[VNImageOption:Any] = [:]
-
-        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
-            requestOptions = [.cameraIntrinsics:cameraIntrinsicData]
-        }
-
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer,
-                                                        //                                                        orientationu: Int32(UIDevice.current.orientation.rawValue),
-            orientation:Int32(UIDeviceOrientation.portrait.rawValue),
-            options: requestOptions)
-
-        do
-        {
-            try imageRequestHandler.perform(self.requests)
-        }
-        catch {
-            print(error)
-        }
-    }
-
-
-
-
-    // MARK: vision prep
-    func setupRectangleVision()
-    {
-        let rectangleDetectionRequest = VNDetectRectanglesRequest(completionHandler: self.handleRectangles)
-        rectangleDetectionRequest.minimumSize = 0.1
-        rectangleDetectionRequest.maximumObservations = 20
-        self.requests.append(rectangleDetectionRequest)
-    }
-
-    func setupClassification()
-    {
-        do {
-            let model = try VNCoreMLModel(for: Inceptionv3().model)
-            let request = VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
-            self.requests.append(request)
-        }
-        catch {
-            print(error)
-        }
     }
 
 
 
 
     // MARK: vision handlers
-    func handleRectangles(request: VNRequest, error: Error?)
-    {
-        guard let observations = request.results as? [VNRectangleObservation] else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            self.drawVisionRequestResults(observations)
-        }
-    }
-
     private func handleTrackingRequestUpdate(_ request: VNRequest, error: Error?)
     {
         DispatchQueue.main.async
@@ -354,10 +293,10 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
                 // prepare for next loop
                 self.lastObservation = newObservation
 
-                //            guard newObservation.confidence >= 0.3 else {
-                //                vpl.frame = .zero
-                //                return
-                //            }
+//                guard newObservation.confidence >= 0.3 else {
+//                    vpl.frame = .zero
+//                    return
+//                }
 
                 // calculate view rect
                 // this is some bullshit you have to do to convert between different numeric data types of UIKit <> AVFoundation <> Vision
@@ -367,61 +306,6 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
 
                 // move the highlight view
                 trackingView.frame = convertedRect
-        }
-    }
-
-
-    func drawVisionRequestResults(_ rectangles:[VNRectangleObservation])
-    {
-        // i am positive this is not a great way to go about doing this lol
-        if let vpl = self.videoPreviewLayer
-        {
-            // remove the sublayers excep tht e video preview lol
-            for layer in vpl.sublayers! {
-                if layer is CAShapeLayer {
-                    layer.removeFromSuperlayer()
-                }
-            }
-
-            for rectangle:VNRectangleObservation in rectangles
-            {
-                // draw the path of the shape it observed. it's probably a trapezoid. i like that shape.
-                let path = UIBezierPath()
-                path.move(to: CGPoint(x: rectangle.topLeft.x, y: rectangle.topLeft.y))
-                path.addLine(to: CGPoint(x: rectangle.topRight.x, y: rectangle.topRight.y))
-                path.addLine(to: CGPoint(x: rectangle.bottomRight.x, y: rectangle.bottomRight.y))
-                path.addLine(to: CGPoint(x: rectangle.bottomLeft.x, y: rectangle.bottomLeft.y))
-                path.close()
-
-                // all observation position values are 0..1, so scale up to the live preview's size
-                path.apply(CGAffineTransform(scaleX: vpl.frame.maxX, y: vpl.frame.maxY))
-
-                //                print(path)
-
-                let fillLayer = CAShapeLayer()
-                fillLayer.path = path.cgPath
-                fillLayer.fillColor = (UIColor.yellow).cgColor
-                fillLayer.opacity = 0.2
-
-                vpl.addSublayer(fillLayer)
-            }
-        }
-    }
-
-
-
-    func handleClassification(request: VNRequest, error: Error?)
-    {
-        guard let observations = request.results as? [VNClassificationObservation] else {
-            return
-        }
-
-        guard let top = observations.first else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            self.uiIdentificationLabel.text = "classification \(top.identifier) \n confidence \(top.confidence) (\(top.confidence*100)%)"
         }
     }
 }
