@@ -8,7 +8,6 @@
 
 import UIKit
 import AVFoundation
-import CoreML
 import Vision
 
 class CoreMLViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate
@@ -18,13 +17,46 @@ class CoreMLViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     @IBOutlet weak var uiIdentificationLabel: UILabel!
     @IBOutlet weak var uiSwapCameraButton: UIButton!
 
+    @IBOutlet weak var trackingView: UIView? {
+        didSet {
+            self.trackingView?.layer.borderColor = UIColor.cyan.cgColor
+            self.trackingView?.layer.borderWidth = 4
+            self.trackingView?.layer.backgroundColor = UIColor.clear.cgColor
+        }
+    }
+
+    @IBAction private func userTapped(_ sender: UITapGestureRecognizer)
+    {
+        if let vpl = self.videoPreviewLayer
+        {
+            guard let trackingView = self.trackingView else {
+                return
+            }
+
+            // get the center of the tap
+            trackingView.frame.size = CGSize(width: 80, height: 80)
+            trackingView.center = sender.location(in: self.view)
+
+            // convert the rect for the initial observation
+            let originalRect = trackingView.frame
+            var convertedRect = vpl.metadataOutputRectConverted(fromLayerRect: originalRect)
+            convertedRect.origin.y = 1 - convertedRect.origin.y
+
+            // set the observation
+            let newObservation = VNDetectedObjectObservation(boundingBox: convertedRect)
+            self.lastObservation = newObservation
+        }
+    }
+
+
     // MARK: ivars
     var captureSession     : AVCaptureSession?
     var videoPreviewLayer  : AVCaptureVideoPreviewLayer?
     var videoConnection    : AVCaptureConnection?
     var requests           = [VNRequest]()
     var isUsingFrontCamera = false
-
+    let sequenceHandler    = VNSequenceRequestHandler()
+    var lastObservation    : VNDetectedObjectObservation?
 
 
 
@@ -230,6 +262,23 @@ class CoreMLViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
+
+        // feed last observation into new tracking to have a cycle of tracked objects in sequence
+        if let lastObservation = self.lastObservation
+        {
+            let trackingRequest = VNTrackObjectRequest(detectedObjectObservation: lastObservation, completionHandler: self.handleTrackingRequestUpdate)
+            trackingRequest.trackingLevel = .accurate
+
+            do {
+                try self.sequenceHandler.perform([trackingRequest], on: pixelBuffer)
+            }
+            catch {
+                print("tracking error \(error)")
+            }
+        }
+
+
+        // todo: eventually phase imageRequestHandler out
         
         var requestOptions:[VNImageOption:Any] = [:]
 
@@ -290,11 +339,41 @@ class CoreMLViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         }
     }
 
+    private func handleTrackingRequestUpdate(_ request: VNRequest, error: Error?)
+    {
+        DispatchQueue.main.async
+        {
+            guard
+                let newObservation = request.results?.first as? VNDetectedObjectObservation,
+                let trackingView = self.trackingView,
+                let vpl = self.videoPreviewLayer
+            else {
+                return
+            }
+
+            // prepare for next loop
+            self.lastObservation = newObservation
+
+//            guard newObservation.confidence >= 0.3 else {
+//                vpl.frame = .zero
+//                return
+//            }
+
+            // calculate view rect
+            // this is some bullshit you have to do to convert between different numeric data types of UIKit <> AVFoundation <> Vision
+            // https://github.com/jeffreybergier/Blog-Getting-Started-with-Vision
+            var transformedRect = newObservation.boundingBox
+            transformedRect.origin.y = 1 - transformedRect.origin.y
+            let convertedRect = vpl.layerRectConverted(fromMetadataOutputRect: transformedRect)
+
+            // move the highlight view
+            trackingView.frame = convertedRect
+        }
+    }
+
 
     func drawVisionRequestResults(_ rectangles:[VNRectangleObservation])
     {
-        print("========== drawVisionRequestResults ==============")
-
         // i am positive this is not a great way to go about doing this lol
         if let vpl = self.videoPreviewLayer
         {
@@ -318,7 +397,7 @@ class CoreMLViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
                 // all observation position values are 0..1, so scale up to the live preview's size
                 path.apply(CGAffineTransform(scaleX: vpl.frame.maxX, y: vpl.frame.maxY))
 
-                print(path)
+//                print(path)
 
                 let fillLayer = CAShapeLayer()
                 fillLayer.path = path.cgPath

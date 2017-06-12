@@ -57,6 +57,10 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bTj-1o-g4F">
                                 <rect key="frame" x="72" y="89" width="625" height="687"/>
                                 <color key="backgroundColor" red="0.9582861075129534" green="0.9582861075129534" blue="0.9582861075129534" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Mlg-DV-iwh" appends="YES" id="trE-D6-EM3"/>
+                                </connections>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wat" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="87U-pf-Il3">
                                 <rect key="frame" x="16" y="808" width="736" height="21"/>
@@ -72,6 +76,10 @@
                                     <action selector="swapCamera:" destination="4DD-4i-ncf" eventType="touchUpInside" id="udD-dd-6lz"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o6P-WF-swF">
+                                <rect key="frame" x="457" y="837" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -90,12 +98,18 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="trackingView" destination="o6P-WF-swF" id="YhP-XR-7aU"/>
                         <outlet property="uiIdentificationLabel" destination="87U-pf-Il3" id="sr8-mz-we2"/>
                         <outlet property="uiPreviewView" destination="bTj-1o-g4F" id="L6L-TN-fSo"/>
                         <outlet property="uiSwapCameraButton" destination="MKu-7M-HeL" id="RoT-ng-Bdw"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H9S-d6-Tnk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="Mlg-DV-iwh">
+                    <connections>
+                        <action selector="userTapped:" destination="4DD-4i-ncf" id="BPM-d9-waF"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1512.2302158273383" y="212.58992805755398"/>
         </scene>
