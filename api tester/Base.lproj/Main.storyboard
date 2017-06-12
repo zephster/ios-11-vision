@@ -179,9 +179,6 @@
                                 <rect key="frame" x="16" y="72" width="343" height="500"/>
                                 <color key="backgroundColor" red="0.95828610749999998" green="0.95828610749999998" blue="0.95828610749999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="G7e-Q1-zuC" appends="YES" id="chf-Qm-bHj"/>
-                                </connections>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wat" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CQg-BX-Gko">
                                 <rect key="frame" x="16" y="580" width="343" height="20.5"/>
@@ -219,11 +216,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eqa-MP-15U" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="G7e-Q1-zuC">
-                    <connections>
-                        <action selector="userTapped:" destination="cv4-dg-VgI" id="ODA-7x-KtY"/>
-                    </connections>
-                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2190" y="212"/>
         </scene>
