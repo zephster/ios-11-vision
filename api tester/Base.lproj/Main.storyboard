@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.17" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="CtP-DU-Sx3">
-    <device id="ipad9_7" orientation="portrait">
+    <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.14"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -14,15 +13,15 @@
             <objects>
                 <tableViewController id="isd-8l-2iU" customClass="MainTableViewController" customModule="api_tester" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="6Va-cI-cpP">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="TestCell" id="ioj-t0-e7J">
-                                <rect key="frame" x="0.0" y="28" width="768" height="44"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ioj-t0-e7J" id="5Ym-RR-tQs">
-                                    <rect key="frame" x="0.0" y="0.0" width="735" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -34,67 +33,65 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="api testing app" id="s3f-mG-she"/>
                     <connections>
-                        <segue destination="MUE-qT-I6p" kind="show" identifier="showCameraTest" id="yZo-2c-3Sa"/>
-                        <segue destination="4DD-4i-ncf" kind="show" identifier="showCoreML" id="uIa-rb-155"/>
+                        <segue destination="MUE-qT-I6p" kind="show" identifier="showCustomCamera" id="yZo-2c-3Sa"/>
+                        <segue destination="4DD-4i-ncf" kind="show" identifier="showVisionRectangles" id="uIa-rb-155"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m4d-ng-wBa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="729" y="121"/>
         </scene>
-        <!--vision.framework-->
+        <!--vision rectangle detection-->
         <scene sceneID="31n-In-zxm">
             <objects>
-                <viewController title="vision.framework" id="4DD-4i-ncf" customClass="CoreMLViewController" customModule="api_tester" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="vision rectangle detection" id="4DD-4i-ncf" customClass="CoreMLViewController" customModule="api_tester" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Mfe-tm-h1Q"/>
                         <viewControllerLayoutGuide type="bottom" id="gJy-x6-7tI"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="cXt-Al-BRX">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bTj-1o-g4F">
-                                <rect key="frame" x="72" y="89" width="625" height="687"/>
+                                <rect key="frame" x="16" y="72" width="343" height="500"/>
                                 <color key="backgroundColor" red="0.9582861075129534" green="0.9582861075129534" blue="0.9582861075129534" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="Mlg-DV-iwh" appends="YES" id="trE-D6-EM3"/>
                                 </connections>
                             </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o6P-WF-swF">
+                                <rect key="frame" x="457" y="837" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wat" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="87U-pf-Il3">
-                                <rect key="frame" x="16" y="808" width="736" height="21"/>
+                                <rect key="frame" x="16" y="580" width="343" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MKu-7M-HeL">
-                                <rect key="frame" x="364" y="885" width="40" height="48"/>
+                                <rect key="frame" x="167" y="619" width="40" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="flip"/>
                                 <connections>
                                     <action selector="swapCamera:" destination="4DD-4i-ncf" eventType="touchUpInside" id="udD-dd-6lz"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o6P-WF-swF">
-                                <rect key="frame" x="457" y="837" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="MKu-7M-HeL" firstAttribute="leading" secondItem="cXt-Al-BRX" secondAttribute="leading" constant="364" id="6Wz-gH-sHk"/>
-                            <constraint firstItem="MKu-7M-HeL" firstAttribute="top" secondItem="87U-pf-Il3" secondAttribute="bottom" constant="56" id="8kA-wD-pdY"/>
-                            <constraint firstAttribute="trailing" secondItem="bTj-1o-g4F" secondAttribute="trailing" constant="71" id="ENv-Jv-SFY"/>
-                            <constraint firstItem="87U-pf-Il3" firstAttribute="centerX" secondItem="bTj-1o-g4F" secondAttribute="centerX" id="KlC-Ce-eSr"/>
-                            <constraint firstItem="bTj-1o-g4F" firstAttribute="top" secondItem="Mfe-tm-h1Q" secondAttribute="bottom" constant="25" id="WwF-nu-Nxp"/>
-                            <constraint firstItem="87U-pf-Il3" firstAttribute="top" secondItem="bTj-1o-g4F" secondAttribute="bottom" constant="32" id="cwy-gk-Jqj"/>
-                            <constraint firstAttribute="bottom" secondItem="87U-pf-Il3" secondAttribute="bottom" constant="195" id="g8E-eK-Yl0"/>
-                            <constraint firstItem="bTj-1o-g4F" firstAttribute="leading" secondItem="cXt-Al-BRX" secondAttribute="leading" constant="72" id="guN-fU-qDc"/>
-                            <constraint firstAttribute="trailing" secondItem="MKu-7M-HeL" secondAttribute="trailing" constant="364" id="lE7-qZ-ab1"/>
-                            <constraint firstItem="gJy-x6-7tI" firstAttribute="top" secondItem="MKu-7M-HeL" secondAttribute="bottom" constant="91" id="mH6-Gh-7DX"/>
-                            <constraint firstItem="87U-pf-Il3" firstAttribute="leading" secondItem="cXt-Al-BRX" secondAttribute="leadingMargin" constant="-4" id="ork-VI-8au"/>
-                            <constraint firstItem="87U-pf-Il3" firstAttribute="centerX" secondItem="MKu-7M-HeL" secondAttribute="centerX" id="qJ6-7P-SjK"/>
+                            <constraint firstAttribute="bottom" secondItem="bTj-1o-g4F" secondAttribute="bottom" constant="95" id="0mE-Y4-H9L"/>
+                            <constraint firstItem="bTj-1o-g4F" firstAttribute="top" secondItem="Mfe-tm-h1Q" secondAttribute="bottom" constant="8" id="4Ap-Dq-GgC"/>
+                            <constraint firstItem="bTj-1o-g4F" firstAttribute="leading" secondItem="cXt-Al-BRX" secondAttribute="leading" constant="16" id="9Cl-bX-ig3"/>
+                            <constraint firstItem="87U-pf-Il3" firstAttribute="trailing" secondItem="bTj-1o-g4F" secondAttribute="trailing" id="9rf-kD-lLY"/>
+                            <constraint firstAttribute="trailing" secondItem="MKu-7M-HeL" secondAttribute="trailing" constant="168" id="G9y-rh-dFd"/>
+                            <constraint firstItem="87U-pf-Il3" firstAttribute="leading" secondItem="bTj-1o-g4F" secondAttribute="leading" id="QAf-qM-j2U"/>
+                            <constraint firstItem="87U-pf-Il3" firstAttribute="top" secondItem="bTj-1o-g4F" secondAttribute="bottom" constant="8" symbolic="YES" id="Zgj-dQ-xdq"/>
+                            <constraint firstAttribute="trailing" secondItem="bTj-1o-g4F" secondAttribute="trailing" constant="16" id="jBq-ZZ-WNM"/>
+                            <constraint firstItem="MKu-7M-HeL" firstAttribute="bottom" secondItem="gJy-x6-7tI" secondAttribute="top" id="p31-Ct-3yZ"/>
+                            <constraint firstItem="MKu-7M-HeL" firstAttribute="leading" secondItem="cXt-Al-BRX" secondAttribute="leading" constant="167" id="ucv-du-RFN"/>
                         </constraints>
                     </view>
                     <connections>
@@ -111,7 +108,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1512.2302158273383" y="212.58992805755398"/>
+            <point key="canvasLocation" x="1511.2" y="211.84407796101951"/>
         </scene>
         <!--camera-->
         <scene sceneID="6Wv-wG-l3l">
@@ -122,7 +119,7 @@
                         <viewControllerLayoutGuide type="bottom" id="1Nu-Sx-2tP"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="C1T-dC-oAY">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SnE-kQ-mwr">

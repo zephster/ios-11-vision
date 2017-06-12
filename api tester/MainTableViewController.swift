@@ -11,9 +11,10 @@ import UIKit
 class MainTableViewController: UITableViewController
 {
     let tests = [
-        "camera",
-        "honk",
-        "coreML"
+        "custom camera",
+        "vision rectangle detection",
+        "vision object classification",
+        "vision object tracking"
     ]
 
     override func viewDidLoad() {
@@ -55,14 +56,14 @@ class MainTableViewController: UITableViewController
         print("selected test", self.tests[indexPath.row])
         let testController:String
 
-        switch (self.tests[indexPath.row])
+        switch (indexPath.row)
         {
-            case "camera":
-                testController = "showCameraTest"
+            case 0:
+                testController = "showCustomCamera"
             break
             
-            case "coreML":
-                testController = "showCoreML"
+            case 1:
+                testController = "showVisionRectangles"
             break;
 
             default:
