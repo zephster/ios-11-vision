@@ -34,7 +34,8 @@
                     <navigationItem key="navigationItem" title="api testing app" id="s3f-mG-she"/>
                     <connections>
                         <segue destination="MUE-qT-I6p" kind="show" identifier="showCustomCamera" id="yZo-2c-3Sa"/>
-                        <segue destination="4DD-4i-ncf" kind="show" identifier="showVisionRectangles" id="uIa-rb-155"/>
+                        <segue destination="4DD-4i-ncf" kind="show" identifier="showVNRectangleDetection" id="uIa-rb-155"/>
+                        <segue destination="cv4-dg-VgI" kind="show" identifier="showVNObjectClassification" id="5Xf-sU-vPw"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m4d-ng-wBa" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -44,7 +45,7 @@
         <!--vision rectangle detection-->
         <scene sceneID="31n-In-zxm">
             <objects>
-                <viewController title="vision rectangle detection" id="4DD-4i-ncf" customClass="CoreMLViewController" customModule="api_tester" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="vision rectangle detection" id="4DD-4i-ncf" customClass="VNRectangleDetectionViewController" customModule="api_tester" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Mfe-tm-h1Q"/>
                         <viewControllerLayoutGuide type="bottom" id="gJy-x6-7tI"/>
@@ -61,10 +62,6 @@
                                     <outletCollection property="gestureRecognizers" destination="Mlg-DV-iwh" appends="YES" id="trE-D6-EM3"/>
                                 </connections>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o6P-WF-swF">
-                                <rect key="frame" x="457" y="837" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wat" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="87U-pf-Il3">
                                 <rect key="frame" x="16" y="580" width="343" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -79,6 +76,10 @@
                                     <action selector="swapCamera:" destination="4DD-4i-ncf" eventType="touchUpInside" id="udD-dd-6lz"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o6P-WF-swF">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -160,6 +161,70 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MiF-TF-tYo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-18.399999999999999" y="120.98950524737631"/>
+        </scene>
+        <!--vision object classification-->
+        <scene sceneID="o4Q-VF-gOQ">
+            <objects>
+                <viewController title="vision object classification" id="cv4-dg-VgI" customClass="VNObjectClassificationViewController" customModule="api_tester" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="8iS-K0-e9X"/>
+                        <viewControllerLayoutGuide type="bottom" id="fuB-3F-mfZ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="LAJ-RF-4sc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HJs-8D-Xv1">
+                                <rect key="frame" x="16" y="72" width="343" height="500"/>
+                                <color key="backgroundColor" red="0.95828610749999998" green="0.95828610749999998" blue="0.95828610749999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="G7e-Q1-zuC" appends="YES" id="chf-Qm-bHj"/>
+                                </connections>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="wat" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CQg-BX-Gko">
+                                <rect key="frame" x="16" y="580" width="343" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ISA-Me-wH0">
+                                <rect key="frame" x="167" y="619" width="40" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="flip"/>
+                                <connections>
+                                    <action selector="swapCamera:" destination="cv4-dg-VgI" eventType="touchUpInside" id="CVf-XV-4rh"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="ISA-Me-wH0" firstAttribute="leading" secondItem="LAJ-RF-4sc" secondAttribute="leading" constant="167" id="AcZ-dI-kIa"/>
+                            <constraint firstItem="CQg-BX-Gko" firstAttribute="leading" secondItem="HJs-8D-Xv1" secondAttribute="leading" id="Owu-Cu-4Ua"/>
+                            <constraint firstItem="HJs-8D-Xv1" firstAttribute="leading" secondItem="LAJ-RF-4sc" secondAttribute="leading" constant="16" id="RKU-gZ-Lc0"/>
+                            <constraint firstItem="CQg-BX-Gko" firstAttribute="trailing" secondItem="HJs-8D-Xv1" secondAttribute="trailing" id="TSw-9i-O4C"/>
+                            <constraint firstAttribute="trailing" secondItem="ISA-Me-wH0" secondAttribute="trailing" constant="168" id="dHg-7T-4dK"/>
+                            <constraint firstAttribute="trailing" secondItem="HJs-8D-Xv1" secondAttribute="trailing" constant="16" id="htf-DL-8GA"/>
+                            <constraint firstItem="HJs-8D-Xv1" firstAttribute="top" secondItem="8iS-K0-e9X" secondAttribute="bottom" constant="8" id="lib-G8-zao"/>
+                            <constraint firstItem="ISA-Me-wH0" firstAttribute="bottom" secondItem="fuB-3F-mfZ" secondAttribute="top" id="mk2-Pf-z05"/>
+                            <constraint firstAttribute="bottom" secondItem="HJs-8D-Xv1" secondAttribute="bottom" constant="95" id="nqD-DT-F4v"/>
+                            <constraint firstItem="CQg-BX-Gko" firstAttribute="top" secondItem="HJs-8D-Xv1" secondAttribute="bottom" constant="8" symbolic="YES" id="q4a-4G-7jk"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="uiIdentificationLabel" destination="CQg-BX-Gko" id="qOF-Zu-a0q"/>
+                        <outlet property="uiPreviewView" destination="HJs-8D-Xv1" id="FxL-y0-vvO"/>
+                        <outlet property="uiSwapCameraButton" destination="ISA-Me-wH0" id="rij-Q9-1sh"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eqa-MP-15U" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="G7e-Q1-zuC">
+                    <connections>
+                        <action selector="userTapped:" destination="cv4-dg-VgI" id="ODA-7x-KtY"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="2190" y="212"/>
         </scene>
     </scenes>
 </document>

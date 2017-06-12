@@ -45,33 +45,39 @@ class MainTableViewController: UITableViewController
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TestCell", for: indexPath)
-
         cell.textLabel?.text = tests[indexPath.row]
-
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         print("selected test", self.tests[indexPath.row])
-        let testController:String
+        let segue:String
 
         switch (indexPath.row)
         {
-            case 0:
-                testController = "showCustomCamera"
+        case 0:
+            segue = "showCustomCamera"
+            break
+
+        case 1:
+            segue = "showVNRectangleDetection"
             break
             
-            case 1:
-                testController = "showVisionRectangles"
-            break;
+        case 2:
+            segue = "showVNObjectClassification"
+            break
 
-            default:
-                fatalError("invalid test")
+        case 3:
+            segue = "showVNObjectTracking"
+            break
+
+        default:
+            fatalError("invalid test")
             break
         }
 
-        self.performSegue(withIdentifier: testController, sender: nil)
+        self.performSegue(withIdentifier: segue, sender: nil)
     }
     
 
