@@ -19,7 +19,7 @@ class VNObjectTrackingViewController: UIViewController, AVCaptureVideoDataOutput
     @IBOutlet weak var trackingView: UIView? {
         didSet {
             self.trackingView?.layer.borderColor = UIColor.cyan.cgColor
-            self.trackingView?.layer.borderWidth = 4
+            self.trackingView?.layer.borderWidth = 2
             self.trackingView?.layer.backgroundColor = UIColor.clear.cgColor
         }
     }
