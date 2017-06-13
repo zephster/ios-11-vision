@@ -115,6 +115,34 @@ extension VNObjectClassificationViewController
         }
     }
 
+    // called every captureOutput frame
+    func processBuffer(pixelBuffer:CVPixelBuffer)
+    {
+        // todo: eventually phase imageRequestHandler out for sequence handler.
+        // the image handler was being used to process both rectangles and classifications
+
+        var requestOptions:[VNImageOption:Any] = [:]
+
+        if let cameraIntrinsicData = CMGetAttachment(pixelBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
+            requestOptions = [.cameraIntrinsics:cameraIntrinsicData]
+        }
+
+        let imageRequestHandler = VNImageRequestHandler(
+            cvPixelBuffer: pixelBuffer,
+//            orientationu: Int32(UIDevice.current.orientation.rawValue),
+            orientation:Int32(UIDeviceOrientation.portrait.rawValue),
+            options: requestOptions
+        )
+
+        do
+        {
+            try imageRequestHandler.perform(self.requests)
+        }
+        catch {
+            print(error)
+        }
+    }
+
     func handleClassification(request: VNRequest, error: Error?)
     {
         guard let observations = request.results as? [VNClassificationObservation] else {
@@ -136,6 +164,32 @@ extension VNObjectClassificationViewController
 extension VNObjectClassificationViewController: AVCaptureVideoDataOutputSampleBufferDelegate
 {
     // MARK: camera stuff
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
+    {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
+
+        self.processBuffer(pixelBuffer: pixelBuffer)
+    }
+
+    @IBAction func swapCamera(_ sender: UIButton)
+    {
+        if let session = self.captureSession
+        {
+            session.stopRunning()
+
+            if self.isUsingFrontCamera {
+                self._initCamera(position: "back")
+                self.isUsingFrontCamera = false
+            }
+            else {
+                self._initCamera(position: "front")
+                self.isUsingFrontCamera = true
+            }
+        }
+    }
+
     func authAndInitCamera()
     {
         if AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
@@ -161,54 +215,6 @@ extension VNObjectClassificationViewController: AVCaptureVideoDataOutputSampleBu
                     self.setupClassification()
                 }
             }
-        }
-    }
-
-    @IBAction func swapCamera(_ sender: UIButton)
-    {
-        if let session = self.captureSession
-        {
-            session.stopRunning()
-
-            if self.isUsingFrontCamera {
-                self._initCamera(position: "back")
-                self.isUsingFrontCamera = false
-            }
-            else {
-                self._initCamera(position: "front")
-                self.isUsingFrontCamera = true
-            }
-        }
-    }
-
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
-    {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
-        }
-
-        // todo: eventually phase imageRequestHandler out for sequence handler.
-        // the image handler was being used to process both rectangles and classifications
-
-        var requestOptions:[VNImageOption:Any] = [:]
-
-        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
-            requestOptions = [.cameraIntrinsics:cameraIntrinsicData]
-        }
-
-        let imageRequestHandler = VNImageRequestHandler(
-            cvPixelBuffer: pixelBuffer,
-            //            orientationu: Int32(UIDevice.current.orientation.rawValue),
-            orientation:Int32(UIDeviceOrientation.portrait.rawValue),
-            options: requestOptions
-        )
-
-        do
-        {
-            try imageRequestHandler.perform(self.requests)
-        }
-        catch {
-            print(error)
         }
     }
 

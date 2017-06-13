@@ -28,8 +28,7 @@ class VNObjectTrackingViewController: UIViewController
 
 
     // MARK: view
-    override func viewWillAppear(_ animated: Bool)
-    {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.authAndInitCamera()
     }
@@ -132,35 +131,53 @@ extension VNObjectTrackingViewController
         }
     }
 
+    // called every captureOutput frame
+    func trackObjectInBuffer(pixelBuffer:CVPixelBuffer)
+    {
+        // feed last observation into new tracking to have a cycle of tracked objects in sequence
+        if let lastObservation = self.lastObservation
+        {
+            let trackingRequest = VNTrackObjectRequest(detectedObjectObservation: lastObservation, completionHandler: self.handleTrackingRequestUpdate)
+            trackingRequest.trackingLevel = .accurate
+
+            do {
+                try self.sequenceHandler.perform([trackingRequest], on: pixelBuffer)
+            }
+            catch {
+                print("tracking error \(error)")
+            }
+        }
+    }
+
     // move tracking rect
     private func handleTrackingRequestUpdate(_ request: VNRequest, error: Error?)
     {
         DispatchQueue.main.async
-            {
-                guard
-                    let newObservation = request.results?.first as? VNDetectedObjectObservation,
-                    let trackingView = self.trackingView,
-                    let vpl = self.videoPreviewLayer
-                    else {
-                        return
-                }
+        {
+            guard
+                let newObservation = request.results?.first as? VNDetectedObjectObservation,
+                let trackingView = self.trackingView,
+                let vpl = self.videoPreviewLayer
+                else {
+                    return
+            }
 
-                // prepare for next loop
-                self.lastObservation = newObservation
+            // prepare for next loop
+            self.lastObservation = newObservation
 
-//                guard newObservation.confidence >= 0.3 else {
-//                    vpl.frame = .zero
-//                    return
-//                }
+//            guard newObservation.confidence >= 0.3 else {
+//                vpl.frame = .zero
+//                return
+//            }
 
-                // calculate view rect
-                // this is some bullshit you have to do to convert between different numeric data types of UIKit <> AVFoundation <> Vision
-                var transformedRect = newObservation.boundingBox
-                transformedRect.origin.y = 1 - transformedRect.origin.y
-                let convertedRect = vpl.layerRectConverted(fromMetadataOutputRect: transformedRect)
+            // calculate view rect
+            // this is some bullshit you have to do to convert between different numeric data types of UIKit <> AVFoundation <> Vision
+            var transformedRect = newObservation.boundingBox
+            transformedRect.origin.y = 1 - transformedRect.origin.y
+            let convertedRect = vpl.layerRectConverted(fromMetadataOutputRect: transformedRect)
 
-                // move the highlight view
-                trackingView.frame = convertedRect
+            // move the highlight view
+            trackingView.frame = convertedRect
         }
     }
 }
@@ -171,26 +188,13 @@ extension VNObjectTrackingViewController
 extension VNObjectTrackingViewController: AVCaptureVideoDataOutputSampleBufferDelegate
 {
     // MARK: camera stuff
-    func authAndInitCamera()
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
     {
-        if AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
-        {
-            self._initCamera()
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
         }
-        else
-        {
-            AVCaptureDevice.requestAccess(for: AVMediaType.video)
-            {
-                response in
-                print("requested access")
 
-                if !response {
-                    self.backToTestList(title: "no access", message: "need camera access")
-                } else {
-                    self._initCamera()
-                }
-            }
-        }
+        self.trackObjectInBuffer(pixelBuffer: pixelBuffer)
     }
 
     @IBAction func swapCamera(_ sender: UIButton)
@@ -210,23 +214,23 @@ extension VNObjectTrackingViewController: AVCaptureVideoDataOutputSampleBufferDe
         }
     }
 
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
+    func authAndInitCamera()
     {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
-        }
-
-        // feed last observation into new tracking to have a cycle of tracked objects in sequence
-        if let lastObservation = self.lastObservation
+        if AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
         {
-            let trackingRequest = VNTrackObjectRequest(detectedObjectObservation: lastObservation, completionHandler: self.handleTrackingRequestUpdate)
-            trackingRequest.trackingLevel = .accurate
+            self._initCamera()
+        }
+        else
+        {
+            AVCaptureDevice.requestAccess(for: AVMediaType.video)
+            {
+                response in
 
-            do {
-                try self.sequenceHandler.perform([trackingRequest], on: pixelBuffer)
-            }
-            catch {
-                print("tracking error \(error)")
+                if !response {
+                    self.backToTestList(title: "no access", message: "need camera access")
+                } else {
+                    self._initCamera()
+                }
             }
         }
     }
