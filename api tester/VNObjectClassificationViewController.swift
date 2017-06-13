@@ -10,9 +10,9 @@ import UIKit
 import AVFoundation
 import Vision
 
-class VNObjectClassificationViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate
+class VNObjectClassificationViewController: UIViewController
 {
-    // MARK: interface
+    // MARK: interface outlets
     @IBOutlet weak var uiPreviewView: UIView!
     @IBOutlet weak var uiIdentificationLabel: UILabel!
     @IBOutlet weak var uiSwapCameraButton: UIButton!
@@ -26,33 +26,10 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
     var isUsingFrontCamera = false
 
 
-
-    // MARK: view funcs
-    override func viewWillAppear(_ animated: Bool)
-    {
+    // MARK: view
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        // get permission for camera access
-        if AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
-        {
-            self.initCamera()
-            self.setupClassification()
-        }
-        else
-        {
-            AVCaptureDevice.requestAccess(for: AVMediaType.video)
-            {
-                response in
-                print("requested access")
-                
-                if !response {
-                    self.backToTestList(title: "no access", message: "need camera access")
-                } else {
-                    self.initCamera()
-                    self.setupClassification()
-                }
-            }
-        }
+        self.authAndInitCamera()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -62,7 +39,6 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
     }
 
     override func viewDidLayoutSubviews() {
-        // reset live previews frame on orientation change
         if let vpl = self.videoPreviewLayer {
             vpl.frame = self.uiPreviewView.bounds
         }
@@ -96,7 +72,14 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
             }
         }
     }
-    
+}
+
+
+
+
+extension VNObjectClassificationViewController
+{
+    // bail out
     func backToTestList(title:String, message:String)
     {
         let alert = UIAlertController(
@@ -104,7 +87,7 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
             message: message,
             preferredStyle: .alert
         )
-        
+
         alert.addAction(UIAlertAction(title: "ok", style: .default)
         {
             _ in
@@ -114,8 +97,71 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
 
             self.navigationController?.popViewController(animated: true)
         })
-        
+
         self.present(alert, animated: true)
+    }
+
+
+    // MARK: vision stuff
+    func setupClassification()
+    {
+        do {
+            let model = try VNCoreMLModel(for: Inceptionv3().model)
+            let request = VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
+            self.requests.append(request)
+        }
+        catch {
+            print(error)
+        }
+    }
+
+    func handleClassification(request: VNRequest, error: Error?)
+    {
+        guard let observations = request.results as? [VNClassificationObservation] else {
+            return
+        }
+
+        guard let top = observations.first else {
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.uiIdentificationLabel.text = "classification \(top.identifier) \n confidence \(top.confidence) (\(top.confidence*100)%)"
+        }
+    }
+}
+
+
+
+extension VNObjectClassificationViewController: AVCaptureVideoDataOutputSampleBufferDelegate
+{
+    // MARK: camera stuff
+    func authAndInitCamera()
+    {
+        if AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
+        {
+            self._initCamera()
+
+            // set up vision stuff
+            self.setupClassification()
+        }
+        else
+        {
+            AVCaptureDevice.requestAccess(for: AVMediaType.video)
+            {
+                response in
+                print("requested access")
+
+                if !response {
+                    self.backToTestList(title: "no access", message: "need camera access")
+                } else {
+                    self._initCamera()
+
+                    // set up vision stuff
+                    self.setupClassification()
+                }
+            }
+        }
     }
 
     @IBAction func swapCamera(_ sender: UIButton)
@@ -125,21 +171,48 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
             session.stopRunning()
 
             if self.isUsingFrontCamera {
-                self.initCamera(position: "back")
+                self._initCamera(position: "back")
                 self.isUsingFrontCamera = false
             }
             else {
-                self.initCamera(position: "front")
+                self._initCamera(position: "front")
                 self.isUsingFrontCamera = true
             }
         }
     }
-    
-    
-    
-    
-    // MARK: init camera
-    func initCamera(position:String = "back")
+
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
+    {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
+
+        // todo: eventually phase imageRequestHandler out for sequence handler.
+        // the image handler was being used to process both rectangles and classifications
+
+        var requestOptions:[VNImageOption:Any] = [:]
+
+        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
+            requestOptions = [.cameraIntrinsics:cameraIntrinsicData]
+        }
+
+        let imageRequestHandler = VNImageRequestHandler(
+            cvPixelBuffer: pixelBuffer,
+            //            orientationu: Int32(UIDevice.current.orientation.rawValue),
+            orientation:Int32(UIDeviceOrientation.portrait.rawValue),
+            options: requestOptions
+        )
+
+        do
+        {
+            try imageRequestHandler.perform(self.requests)
+        }
+        catch {
+            print(error)
+        }
+    }
+
+    private func _initCamera(position:String = "back")
     {
         var captureInput : AVCaptureDeviceInput!
         var captureOutput: AVCaptureVideoDataOutput!
@@ -153,8 +226,8 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
         else
         {
             captureDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInWideAngleCamera,
-                                                       for: AVMediaType.video,
-                                                       position: AVCaptureDevice.Position.front)
+                                                    for: AVMediaType.video,
+                                                    position: AVCaptureDevice.Position.front)
         }
 
         guard let camera = captureDevice else {
@@ -204,8 +277,8 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
         self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
 
         guard let previewLayer = self.videoPreviewLayer,
-              let videoConnection = previewLayer.connection else {
-            return
+            let videoConnection = previewLayer.connection else {
+                return
         }
 
         // save this reference so i can update the orientation
@@ -217,75 +290,4 @@ class VNObjectClassificationViewController: UIViewController, AVCaptureVideoData
         // start session
         session.startRunning()
     }
-
-
-
-
-    // MARK: delegate funcs
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
-    {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
-        }
-
-        // todo: eventually phase imageRequestHandler out for sequence handler.
-        // the image handler was being used to process both rectangles and classifications
-
-        var requestOptions:[VNImageOption:Any] = [:]
-
-        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
-            requestOptions = [.cameraIntrinsics:cameraIntrinsicData]
-        }
-
-        let imageRequestHandler = VNImageRequestHandler(
-            cvPixelBuffer: pixelBuffer,
-//            orientationu: Int32(UIDevice.current.orientation.rawValue),
-            orientation:Int32(UIDeviceOrientation.portrait.rawValue),
-            options: requestOptions
-        )
-
-        do
-        {
-            try imageRequestHandler.perform(self.requests)
-        }
-        catch {
-            print(error)
-        }
-    }
-    
-    
-    
-    
-    // MARK: vision prep
-    func setupClassification()
-    {
-        do {
-            let model = try VNCoreMLModel(for: Inceptionv3().model)
-            let request = VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
-            self.requests.append(request)
-        }
-        catch {
-            print(error)
-        }
-    }
-    
-
-    
-    
-    // MARK: vision handlers
-    func handleClassification(request: VNRequest, error: Error?)
-    {
-        guard let observations = request.results as? [VNClassificationObservation] else {
-            return
-        }
-        
-        guard let top = observations.first else {
-            return
-        }
-        
-        DispatchQueue.main.async {
-            self.uiIdentificationLabel.text = "classification \(top.identifier) \n confidence \(top.confidence) (\(top.confidence*100)%)"
-        }
-    }
 }
-
