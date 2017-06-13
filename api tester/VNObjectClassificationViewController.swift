@@ -225,9 +225,11 @@ extension VNObjectClassificationViewController: AVCaptureVideoDataOutputSampleBu
         }
         else
         {
-            captureDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInWideAngleCamera,
-                                                    for: AVMediaType.video,
-                                                    position: AVCaptureDevice.Position.front)
+            captureDevice = AVCaptureDevice.default(
+                AVCaptureDevice.DeviceType.builtInWideAngleCamera,
+                for: AVMediaType.video,
+                position: AVCaptureDevice.Position.front
+            )
         }
 
         guard let camera = captureDevice else {
